@@ -7,7 +7,7 @@
     <meta name="description" content="vuepress">
     <link rel="icon" href="/img/logo.ico">
     
-    <link rel="preload" href="/assets/css/0.styles.274c4769.css" as="style"><link rel="preload" href="/assets/js/app.95366c53.js" as="script"><link rel="preload" href="/assets/js/2.3b428b4a.js" as="script"><link rel="preload" href="/assets/js/10.087dfb38.js" as="script"><link rel="prefetch" href="/assets/js/11.76b9bf4f.js"><link rel="prefetch" href="/assets/js/12.061e9551.js"><link rel="prefetch" href="/assets/js/13.6d9a21ca.js"><link rel="prefetch" href="/assets/js/3.e4f07655.js"><link rel="prefetch" href="/assets/js/4.482977d1.js"><link rel="prefetch" href="/assets/js/5.b292c85e.js"><link rel="prefetch" href="/assets/js/6.20199e55.js"><link rel="prefetch" href="/assets/js/7.07e650d6.js"><link rel="prefetch" href="/assets/js/8.51e7c42a.js"><link rel="prefetch" href="/assets/js/9.dfaaba1c.js">
+    <link rel="preload" href="/assets/css/0.styles.274c4769.css" as="style"><link rel="preload" href="/assets/js/app.f8e7b8ef.js" as="script"><link rel="preload" href="/assets/js/2.3b428b4a.js" as="script"><link rel="preload" href="/assets/js/10.9c2b5eba.js" as="script"><link rel="prefetch" href="/assets/js/11.2c907d52.js"><link rel="prefetch" href="/assets/js/12.061e9551.js"><link rel="prefetch" href="/assets/js/13.6d9a21ca.js"><link rel="prefetch" href="/assets/js/3.e4f07655.js"><link rel="prefetch" href="/assets/js/4.482977d1.js"><link rel="prefetch" href="/assets/js/5.b292c85e.js"><link rel="prefetch" href="/assets/js/6.20199e55.js"><link rel="prefetch" href="/assets/js/7.07e650d6.js"><link rel="prefetch" href="/assets/js/8.51e7c42a.js"><link rel="prefetch" href="/assets/js/9.dfaaba1c.js">
     <link rel="stylesheet" href="/assets/css/0.styles.274c4769.css">
   </head>
   <body>
@@ -42,11 +42,50 @@ new Action(
 delegate
 {
 }
-));</p> <p><strong>VS2010调试过一次后vhost关不掉，生成项目时提示无法复制到生成目录，因为被另一线程占用</strong></p> <p>项目-&gt;属性-&gt;调试-&gt;启用调试器，关掉启用Visual Studio承载进程</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+));</p> <p><strong>VS2010调试过一次后vhost关不掉，生成项目时提示无法复制到生成目录，因为被另一线程占用</strong></p> <p>项目-&gt;属性-&gt;调试-&gt;启用调试器，关掉启用Visual Studio承载进程</p> <p><strong>Win7/Win10移动用户文件夹(C:\Users)移到非系统盘(如D:)</strong></p> <p>基本原理
+1、将C:\Users下的所有文件复制到D:\Users
+2、然后在C:盘创建一个名为Users的软连接(soft link) 指向D:\Users</p> <p>新系统安装时
+Win7/Win10新系统安装时，在安装程序创建用户帐户之前，因为还没有C:\Users下还没有用户文件夹，所以步骤相对简单些
+　　
+在安装Win7/Win10的过程中，要求输入用户名及密码的时候，先不如输入任何信息，按“Shift+F10”打开DOS窗口(命令行窗口)，输入以下命令：</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>## 复制C:\Users下所有文件(包含子文件夹)到D:\Users
+robocopy &quot;C:\Users&quot; &quot;D:\Users&quot; /E /COPYALL /XJ
+## 删除C:\Users文件夹 
+rmdir &quot;C:\Users&quot; /S /Q 
+## 创建(目录)软连接 C:\Users 指向 D:\Users
+mklink /J &quot;C:\Users&quot; &quot;D:\Users&quot;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br></div></div><p>已经安装好的Win7/Win10系统</p> <p>维护模式
+如果想要移动已安装好的Win7/Win10中的用户文件夹就要麻烦些，需要在C:盘Windows系统未启动状态下来执行，所以要在启动时进入维护模式打开DOS窗口.
+具体的做法是开机时按F8键，出现黑底白字的菜单（如下图），默认光标在第一项Repair your computer上，直接按回车。
+之后会弹出2个提示框，直接点Next或OK即可。
+单击最后一项：Command Prompt(命令行提示符，也就是DOS窗口)，在DOS窗口执行三条命令</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>## 复制C:\Users下的所有文件到D:\Users
+##参数说明：此命令为Windows的“强健文件拷贝”命令。
+##		/E 表示拷贝文件时包含子目录（包括空目录）
+##		/COPYALL 表示拷贝所有文件信息
+##		/XJ 表示不包括Junction points（默认是包括的）
+## 		/XD &quot;C:\Users\Administrator&quot; 表示不包括指定的目录,此处指定目录为：&quot;C:\Users\Administrator&quot;
+robocopy &quot;C:\Users&quot; &quot;D:\Users&quot; /E /COPYALL /XJ /XD &quot;C:\Users\Administrator&quot;
+## 删除C:\Users文件夹 
+##参数说明：此命令删除指定目录。
+##		/S 删除指定目录及其中的所有文件。用于删除目录树。
+##		/Q 安静模式。删除时不询问。  
+rmdir &quot;C:\Users&quot; /S /Q   
+## 创建(目录)软连接 C:\Users 指向 D:\Users
+## 参数说明：此命令创建符号连接。
+##		/J 连接类型为目录连接
+mklink /J &quot;C:\Users&quot; &quot;D:\Users&quot;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br></div></div><p>Windows运行状态下</p> <p>如果你进入Windows维护模式有困难，也可以考虑在当前Windows运行状态下做C:\User的迁移。要按以下步骤操作（稍微麻烦一点，并且过程中可能会出现无法拷贝文件的情况）</p> <p>首先要关闭所有应用程序</p> <p>然后要开启administrator帐户：
+在我的电脑点击右键，打开管理界面
+取消administrator帐户的禁用
+注销当前用户，而后以“Administrator”登录。
+打开命令行窗口，输入以下命令：</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>robocopy &quot;C:\Users&quot; &quot;D:\Users&quot; /E /COPYALL /XJ /XD &quot;C:\Users\Administrator&quot;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>注销Administrator，重新用你的用户名登录Windows，而后到计算机管理界面禁用Administrator；
+以管理员身份打开一个DOS窗口，输入以下命令:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>rmdir &quot;C:\Users&quot; /S /Q
+mklink /J &quot;C:\Users&quot; &quot;D:\Users&quot;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>再重启电脑。</p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">10/17/2019, 7:26:35 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
       ←
       <a href="/blog/git.html" class="prev">git</a></span> <span class="next"><a href="/blog/Linux+shell.html">Linux+shell</a>
       →
     </span></p></div> </main></div><div class="global-ui"></div></div>
-    <script src="/assets/js/app.95366c53.js" defer></script><script src="/assets/js/2.3b428b4a.js" defer></script><script src="/assets/js/10.087dfb38.js" defer></script>
+    <script src="/assets/js/app.f8e7b8ef.js" defer></script><script src="/assets/js/2.3b428b4a.js" defer></script><script src="/assets/js/10.9c2b5eba.js" defer></script>
   </body>
 </html>
